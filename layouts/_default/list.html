@@ -6,6 +6,15 @@
         {{ if .IsHome }}
             {{/* For homepage, get all regular pages sorted by date */}}
             {{ $pages = where .Site.RegularPages "Section" "in" (slice "posts" "post" "") }}
+            {{/* Exclude page type from homepage */}}
+            {{ $pages = where $pages "Type" "!=" "page" }}
+        {{ else }}
+            {{/* For taxonomy pages (categories, tags), use the provided pages */}}
+            {{ if .Data.Pages }}
+                {{ $pages = .Data.Pages }}
+            {{ end }}
+            {{/* Exclude page type from all listings */}}
+            {{ $pages = where $pages "Type" "!=" "page" }}
         {{ end }}
         {{ $paginator := .Paginate $pages }}
         {{ range $paginator.Pages }}
