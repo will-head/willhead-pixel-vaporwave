@@ -1,0 +1,22 @@
+<header class="site-header pixel-border">
+    <div class="header-content">
+        <h1 class="site-title">
+            <a href="{{ "/" | relURL }}" class="glitch-text" data-text="{{ .Site.Title }}" aria-hidden="true">
+                {{ .Site.Title }}
+            </a>
+            <span class="sr-only">{{ .Site.Title }}</span>
+        </h1>
+
+        {{ with .Site.Params.description }}
+            <p class="site-subtitle">{{ . | safeHTML }}</p>
+        {{ end }}
+
+        {{ with .Site.Menus.main }}
+            <nav class="main-nav" aria-label="Main Navigation">
+                {{ range . }}
+                    <a href="{{ .URL }}" class="pixel-nav-link">{{ .Name }}</a>
+                {{ end }}
+            </nav>
+        {{ end }}
+    </div>
+</header>

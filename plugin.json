@@ -1,0 +1,34 @@
+{
+  "name": "Pixel Vaporwave",
+  "description": "A vaporwave glitch-inspired micro.blog theme with neon pink & purple colors, pixel fonts, and retro aesthetics. Features include custom 8bit cursor, pixel borders, neon glow effects, and single column layout.",
+  "version": "1.0.0",
+  "author": "Will Head",
+  "url": "https://github.com/will-head/willhead-pixel-vaporwave",
+  "license": "MIT",
+  "params": [
+    {
+      "key": "show_categories",
+      "label": "Show categories on posts",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "key": "show_date",
+      "label": "Show post dates",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "key": "accent_color",
+      "label": "Accent color",
+      "type": "string",
+      "default": "#ff10f0"
+    },
+    {
+      "key": "secondary_color",
+      "label": "Secondary color",
+      "type": "string",
+      "default": "#a855f7"
+    }
+  ]
+}

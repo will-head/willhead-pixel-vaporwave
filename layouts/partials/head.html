@@ -1,0 +1,161 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="{{ with .Description }}{{ . }}{{ else }}{{ .Site.Params.description }}{{ end }}">
+<meta name="author" content="{{ .Site.Author.name }}">
+<meta name="color-scheme" content="dark">
+
+<!-- Content Security Policy for defense-in-depth -->
+<meta http-equiv="Content-Security-Policy" 
+      content="default-src 'self'; 
+               script-src 'self' 'unsafe-inline' https://micro.blog https://fonts.googleapis.com; 
+               style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com; 
+               font-src 'self' https://fonts.gstatic.com; 
+               img-src 'self' data: https:; 
+               connect-src 'self' https://micro.blog; 
+               frame-src https://player.vimeo.com https://www.youtube.com https://www.youtube-nocookie.com; 
+               frame-ancestors 'none'; 
+               base-uri 'self'; 
+               form-action 'self';">
+
+
+<title>{{ .Title }}{{ if not .IsHome }} | {{ .Site.Title }}{{ end }}</title>
+
+<!-- IndieWeb & Micro.pub Tags -->
+{{ with .Site.Params.microblog_username }}
+    <link rel="me" href="https://micro.blog/{{ . }}" />
+{{ end }}
+{{ with .Site.Params.twitter_username }}
+    <link rel="me" href="https://twitter.com/{{ . }}" />
+{{ end }}
+{{ with .Site.Params.github_username }}
+    <link rel="me" href="https://github.com/{{ . }}" />
+{{ end }}
+{{ with .Site.Params.instagram_username }}
+    <link rel="me" href="https://instagram.com/{{ . }}" />
+{{ end }}
+
+<link rel="authorization_endpoint" href="https://micro.blog/indieauth/auth" />
+<link rel="token_endpoint" href="https://micro.blog/indieauth/token" />
+<link rel="micropub" href="https://micro.blog/micropub" />
+<link rel="microsub" href="https://micro.blog/microsub" />
+<link rel="webmention" href="https://micro.blog/webmention" />
+<link rel="subscribe" href="https://micro.blog/users/follow" />
+
+<!-- RSS Feed -->
+{{ with .OutputFormats.Get "rss" }}
+    {{ printf `<link rel="%s" type="%s" href="%s" title="%s" />` .Rel .MediaType.Type .Permalink site.Title | safeHTML }}
+{{ end }}
+
+<!-- Canonical URL -->
+<link rel="canonical" href="{{ .Permalink }}" />
+
+<!-- OpenGraph / Facebook -->
+<meta property="og:type" content="{{ if .IsPage }}article{{ else }}website{{ end }}" />
+<meta property="og:title" content="{{ .Title }}" />
+{{ with .Description }}
+    <meta property="og:description" content="{{ . }}" />
+{{ else }}
+    <meta property="og:description" content="{{ .Site.Params.description }}" />
+{{ end }}
+<meta property="og:url" content="{{ .Permalink }}" />
+{{ with .Site.Author.name }}
+    <meta property="article:author" content="{{ . }}" />
+{{ end }}
+{{ with .Params.images }}
+    <meta property="og:image" content="{{ . }}" />
+{{ else }}
+    {{ with .Site.Params.og_image }}
+        <meta property="og:image" content="{{ . | absURL }}" />
+    {{ end }}
+{{ end }}
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary" />
+{{ with .Site.Params.twitter_username }}
+    <meta name="twitter:site" content="@{{ . }}" />
+{{ end }}
+<meta name="twitter:title" content="{{ .Title }}" />
+{{ with .Description }}
+    <meta name="twitter:description" content="{{ . }}" />
+{{ else }}
+    <meta name="twitter:description" content="{{ .Site.Params.description }}" />
+{{ end }}
+{{ with .Params.images }}
+    <meta name="twitter:image" content="{{ . }}" />
+{{ else }}
+    {{ with .Site.Params.og_image }}
+        <meta name="twitter:image" content="{{ . | absURL }}" />
+    {{ end }}
+{{ end }}
+
+<!-- Custom CSS (only if file exists) -->
+{{ if fileExists "static/custom.css" }}
+    <link rel="stylesheet" href="{{ "custom.css" | relURL }}">
+{{ end }}
+
+<!-- Plugin CSS -->
+{{ range .Site.Params.plugins_css }}
+    <link rel="stylesheet" href="{{ . }}" />
+{{ end }}
+
+<!-- JSON-LD Structured Data -->
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "{{ if .IsPage }}BlogPosting{{ else }}WebSite{{ end }}",
+    {{ if .IsPage }}
+    "headline": {{ .Title | jsonify }},
+    "datePublished": {{ .Date.Format "2006-01-02T15:04:05Z07:00" | jsonify }},
+    "dateModified": {{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" | jsonify }},
+    {{ with .Params.author }}"author": {
+        "@type": "Person",
+        "name": {{ . | jsonify }}
+    },{{ end }}
+    {{ end }}
+    "url": {{ .Permalink | jsonify }},
+    {{ if .IsPage }}
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": {{ .Permalink | jsonify }}
+    }
+    {{ else }}
+    "name": {{ .Site.Title | jsonify }},
+    "description": {{ .Site.Params.description | jsonify }}
+    {{ end }}
+}
+</script>
+
+<!-- Plugin HTML partials (whitelisted for security) -->
+{{ range $filename := .Site.Params.plugins_html }}
+    {{ $whitelist := (slice "analytics.html" "custom-head.html" "tracking.html") }}
+    {{ $isValid := false }}
+    {{ range $whitelist }}
+        {{ if eq $filename . }}
+            {{ $isValid = true }}
+        {{ end }}
+    {{ end }}
+    {{/* Security: Comprehensive path traversal protection */}}
+    {{ $hasDotDot := strings.Contains $filename ".." }}
+    {{ $hasSlash := strings.Contains $filename "/" }}
+    {{ $hasBackslash := strings.Contains $filename "\\" }}
+    {{ $hasNullByte := strings.Contains $filename "\x00" }}
+    {{ $isSafe := and $isValid (not $hasDotDot) (not $hasSlash) (not $hasBackslash) (not $hasNullByte) }}
+    {{ if $isSafe }}
+        {{/* Verify file exists in partials directory before including */}}
+        {{ $partialPath := printf "partials/%s" $filename }}
+        {{ if fileExists $partialPath }}
+            {{ partial $filename $ }}
+        {{ end }}
+    {{ end }}
+{{ end }}
+
+<!-- Theme CSS -->
+<link rel="stylesheet" href="{{ "css/style.css" | relURL }}">
+
+<!-- Pixel Font with Subresource Integrity -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet" crossorigin="anonymous">
+<noscript>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=fallback" rel="stylesheet" crossorigin="anonymous">
+</noscript>

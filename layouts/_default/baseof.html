@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="{{ .Site.Language.Lang }}">
+<head>
+    {{ partial "head.html" . }}
+</head>
+<body>
+    <!-- Header -->
+    {{ partial "header.html" . }}
+
+    <!-- Main Content -->
+    <main id="main-content" class="main-content">
+        {{ block "main" . }}{{ end }}
+    </main>
+
+    <!-- Footer -->
+    {{ partial "footer.html" . }}
+
+    {{ partial "custom_footer.html" . }}
+
+    {{ range .Site.Params.plugins_js }}
+        {{ $url := . }}
+        {{/* Security: Default to micro.blog domain if no whitelist provided (fail-closed) */}}
+        {{ $allowedDomains := $.Site.Params.plugins_js_allowed_domains | default (slice "micro.blog") }}
+        {{ $isValid := false }}
+        {{ if or (hasPrefix $url "http://") (hasPrefix $url "https://") }}
+            {{ $parsed := urls.Parse $url }}
+            {{/* Only allow if hostname matches whitelist */}}
+            {{ range $allowedDomains }}
+                {{/* Hugo 0.91 compatible: check exact match or if domain contains the allowed domain */}}
+                {{ if or (eq $parsed.Hostname .) (in $parsed.Hostname .) }}
+                    {{ $isValid = true }}
+                {{ end }}
+            {{ end }}
+        {{ else if hasPrefix $url "/" }}
+            {{/* Allow relative URLs (served from same origin) */}}
+            {{ $isValid = true }}
+        {{ end }}
+        {{ if $isValid }}
+            <script src="{{ $url | safeHTMLAttr }}" crossorigin="anonymous"></script>
+        {{ end }}
+    {{ end }}
+</body>
+</html>

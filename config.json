@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "params": {
+    "show_categories": true,
+    "show_date": true,
+    "custom_css_enabled": true,
+    "custom_footer_enabled": true,
+    "microblog_username": null,
+    "twitter_username": null,
+    "github_username": null,
+    "instagram_username": null,
+    "og_image": null
+  }
+}

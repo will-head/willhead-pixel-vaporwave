@@ -1,0 +1,65 @@
+{{ define "main" }}
+<div class="container" id="main-content">
+    <div class="posts-feed">
+        {{/* Homepage: Show only posts, exclude pages */}}
+        {{ $posts := where .Site.RegularPages "Type" "in" (slice "posts" "post") }}
+        {{ if eq (len $posts) 0 }}
+            {{/* Fallback: If no posts found, get all pages except those in Pages section */}}
+            {{ $posts = where .Site.RegularPages "Section" "!=" "" }}
+        {{ end }}
+        {{ $paginator := .Paginate $posts }}
+        {{ range $paginator.Pages }}
+            <article class="post-card pixel-border h-entry">
+                {{ with $.Site.Author.name }}
+                    <data class="p-author" value="{{ . }}"></data>
+                {{ end }}
+                {{ if .Title }}
+                    <h2 class="post-title p-name">
+                        <a href="{{ .Permalink }}" class="u-url">{{ .Title }}</a>
+                    </h2>
+                {{ end }}
+
+                <div class="post-content e-content">
+                    {{ .Content }}
+                </div>
+
+                <div class="post-meta">
+                    <a href="{{ .Permalink }}" class="pixel-btn">Permalink</a>
+                    
+                    {{ if $.Site.Params.show_date }}
+                        <time class="dt-published" datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
+                            {{ .Date.Format "Jan 2, 2006" }}
+                        </time>
+                    {{ end }}
+
+                    {{ if and $.Site.Params.show_categories .Params.categories }}
+                        <span class="categories">
+                            {{ range .Params.categories }}
+                                <span class="category-tag">{{ . }}</span>
+                            {{ end }}
+                        </span>
+                    {{ end }}
+                </div>
+
+                <div class="pixel-divider"></div>
+            </article>
+        {{ end }}
+
+        {{ if gt $paginator.TotalPages 1 }}
+            <nav class="pagination pixel-border" aria-label="Pagination">
+                {{ if $paginator.HasPrev }}
+                    <a href="{{ $paginator.Prev.URL }}" class="pixel-btn">◄ Previous</a>
+                {{ end }}
+
+                <span class="page-info">
+                    Page {{ $paginator.PageNumber }} of {{ $paginator.TotalPages }}
+                </span>
+
+                {{ if $paginator.HasNext }}
+                    <a href="{{ $paginator.Next.URL }}" class="pixel-btn">Next ►</a>
+                {{ end }}
+            </nav>
+        {{ end }}
+    </div>
+</div>
+{{ end }}

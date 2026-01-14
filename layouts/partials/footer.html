@@ -1,0 +1,24 @@
+<footer class="site-footer pixel-border" role="contentinfo">
+    <div class="footer-content">
+        <p class="footer-text">
+            &copy; {{ now.Year }} {{ .Site.Author.name }}
+            {{ with .Site.Params.github_username }}
+                | <a href="https://github.com/{{ . }}" rel="noopener noreferrer">GitHub</a>
+            {{ end }}
+            {{ with .Site.Params.twitter_username }}
+                | <a href="https://twitter.com/{{ . }}" rel="me noopener noreferrer">X (Twitter)</a>
+            {{ end }}
+        </p>
+
+        <p class="footer-powered">
+            Powered by <a href="https://micro.blog" rel="noopener noreferrer">Micro.blog</a>
+            | Theme: <a href="https://github.com/will-head/willhead-pixel-vaporwave" rel="noopener noreferrer">Pixel Vaporwave</a>
+        </p>
+
+        <div class="pixel-hearts">
+            <span class="pixel-heart"></span>
+            <span class="pixel-heart"></span>
+            <span class="pixel-heart"></span>
+        </div>
+    </div>
+</footer>

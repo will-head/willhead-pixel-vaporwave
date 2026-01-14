@@ -1,0 +1,13 @@
+name = "Pixel Vaporwave"
+license = "MIT"
+licenselink = "https://github.com/will-head/willhead-pixel-vaporwave/blob/main/LICENSE"
+description = "A modern vaporwave-inspired Micro.blog theme with neon pink & purple, pixel fonts, grid backgrounds, and accessibility features"
+homepage = "https://github.com/will-head/willhead-pixel-vaporwave"
+demosite = "https://willhead.micro.blog/"
+tags = ["vaporwave", "pixel", "retro", "glitch", "cyberpunk", "minimal", "accessible", "microblog"]
+features = ["pixel-font", "responsive", "accessible", "wcag-aa", "indieweb", "microformats", "micropub", "webmention", "opengraph", "json-ld", "single-column", "archive-page", "404-page"]
+min_version = 0.91
+
+[author]
+  name = "Will Head"
+  homepage = "https://willhead.micro.blog"

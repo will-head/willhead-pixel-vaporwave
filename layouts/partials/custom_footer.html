@@ -1,0 +1,33 @@
+{{/* This partial allows Micro.blog users to add custom footer content */}}
+{{/* 
+    SECURITY DOCUMENTATION:
+    
+    1. .Site.Params.custom_footer (line 11):
+       - Hugo automatically HTML-escapes this content by default
+       - This prevents XSS attacks from user-provided text
+       - NEVER add | safeHTML to this variable
+       - Safe for plain text, markdown-formatted text will NOT be rendered
+    
+    2. custom_footer_content.html partial (line 18):
+       - For advanced users who need HTML/CSS in footer
+       - Only include if you control the content of this file
+       - This file is NOT automatically escaped
+       - Ensure any user input in that file is properly sanitized
+    
+    3. Best Practices:
+       - Use .Site.Params.custom_footer for simple text (SAFE)
+       - Only use custom_footer_content.html for trusted HTML (TRUSTED SOURCE REQUIRED)
+       - Never directly output user-submitted HTML without escaping
+*/}}
+{{ if .Site.Params.custom_footer }}
+    <div class="custom-footer">
+        {{/* Content is automatically HTML-escaped for XSS protection */}}
+        {{ .Site.Params.custom_footer }}
+    </div>
+{{ end }}
+
+{{/* Optional: Include custom footer from partial file for advanced users */}}
+{{ if fileExists "layouts/partials/custom_footer_content.html" }}
+    {{/* WARNING: Content in this partial is NOT automatically escaped */}}
+    {{ partial "custom_footer_content.html" . }}
+{{ end }}

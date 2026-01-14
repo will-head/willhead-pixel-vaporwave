@@ -1,0 +1,45 @@
+{{ define "main" }}
+<div class="container">
+    <div class="archive-page pixel-border">
+        <h1 class="archive-title">
+            <span class="glitch-text" data-text="ARCHIVE" aria-hidden="true">ARCHIVE</span>
+            <span class="sr-only">Archive</span>
+        </h1>
+
+        <div class="pixel-divider"></div>
+
+        <div class="archive-list">
+            {{ $pages := where .Site.RegularPages "Type" "post" }}
+            {{ range $pages.GroupByDate "2006" }}
+                <div class="archive-year">
+                    <h2 class="year-header pixel-btn">{{ .Key }}</h2>
+
+                    <div class="year-posts">
+                        {{ range .Pages }}
+                            <article class="archive-post">
+                                <time datetime="{{ .Date.Format "2006-01-02" }}" class="post-date">
+                                    {{ .Date.Format "Jan 2" }}
+                                </time>
+
+                                {{ if .Title }}
+                                    <a href="{{ .Permalink }}" class="post-link">{{ .Title }}</a>
+                                {{ else }}
+                                    <a href="{{ .Permalink }}" class="post-link">[Micro Post]</a>
+                                {{ end }}
+
+                                {{ if .Params.categories }}
+                                    <span class="categories">
+                                        {{ range .Params.categories }}
+                                            <span class="category-tag">{{ . }}</span>
+                                        {{ end }}
+                                    </span>
+                                {{ end }}
+                            </article>
+                        {{ end }}
+                    </div>
+                </div>
+            {{ end }}
+        </div>
+    </div>
+</div>
+{{ end }}
